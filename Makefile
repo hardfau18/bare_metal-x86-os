@@ -1,5 +1,7 @@
 BUILD_DIR=${PWD}/build/
 QEMU_ARGS=--nographic --serial mon:stdio
+AS_FLAGS=-mx86-used-note=no --fatal-warnings
+LD_FLAGS=-e entry --oformat binary  --fatal-warnings
 
 ifdef DEBUG
 	QEMU_ARGS += -d in_asm -D log
@@ -21,10 +23,10 @@ clean:
 	@rm -rf ${BUILD_DIR}
 
 ${BUILD_DIR}/boot.bin: ${BUILD_DIR}/boot.o | ${BUILD_DIR}
-	@ld -e entry --oformat binary $< -o $@ --fatal-warnings
+	@ld ${LD_FLAGS} $< -o $@
 
 ${BUILD_DIR}/boot.o: src/boot.s | ${BUILD_DIR}
-	@as -mx86-used-note=no -o $@ $<
+	@as -o $@ $< ${AS_FLAGS}
 
 ${BUILD_DIR}:
 	@mkdir $@
